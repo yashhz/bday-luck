@@ -1,0 +1,606 @@
+"use client"
+
+import { useState } from "react"
+
+// Birthday luck data - rank to date mapping
+const LUCK_DATA: Record<number, string> = {
+  1: "2026-05-29",
+  2: "2026-06-01",
+  3: "2026-06-10",
+  4: "2026-07-09",
+  5: "2026-02-05",
+  6: "2026-06-28",
+  7: "2026-06-19",
+  8: "2026-02-14",
+  9: "2026-02-23",
+  10: "2026-03-04",
+  11: "2026-06-08",
+  12: "2026-06-17",
+  13: "2026-06-26",
+  14: "2026-07-07",
+  15: "2026-01-31",
+  16: "2026-02-03",
+  17: "2026-02-12",
+  18: "2026-02-21",
+  19: "2026-03-02",
+  20: "2026-03-11",
+  21: "2026-06-05",
+  22: "2026-06-14",
+  23: "2026-06-23",
+  24: "2026-07-04",
+  25: "2026-07-13",
+  26: "2026-01-28",
+  27: "2026-02-09",
+  28: "2026-02-18",
+  29: "2026-02-27",
+  30: "2026-03-08",
+  31: "2026-06-07",
+  32: "2026-06-16",
+  33: "2026-06-25",
+  34: "2026-07-06",
+  35: "2026-01-30",
+  36: "2026-02-02",
+  37: "2026-02-11",
+  38: "2026-02-20",
+  39: "2026-02-29",
+  40: "2026-03-01",
+  41: "2026-03-10",
+  42: "2026-05-28",
+  43: "2026-06-09",
+  44: "2026-06-18",
+  45: "2026-06-27",
+  46: "2026-07-08",
+  47: "2026-06-04",
+  48: "2026-10-06",
+  49: "2026-10-15",
+  50: "2026-10-24",
+  51: "2026-11-05",
+  52: "2026-10-04",
+  53: "2026-10-13",
+  54: "2026-10-22",
+  55: "2026-10-31",
+  56: "2026-11-03",
+  57: "2026-11-12",
+  58: "2026-10-01",
+  59: "2026-10-10",
+  60: "2026-10-19",
+  61: "2026-10-28",
+  62: "2026-11-09",
+  63: "2026-10-03",
+  64: "2026-10-12",
+  65: "2026-10-21",
+  66: "2026-10-30",
+  67: "2026-11-02",
+  68: "2026-11-11",
+  69: "2026-02-04",
+  70: "2026-02-13",
+  71: "2026-06-13",
+  72: "2026-06-22",
+  73: "2026-07-03",
+  74: "2026-07-12",
+  75: "2026-05-31",
+  76: "2026-06-03",
+  77: "2026-06-12",
+  78: "2026-06-21",
+  79: "2026-06-30",
+  80: "2026-07-02",
+  81: "2026-07-11",
+  82: "2026-06-06",
+  83: "2026-06-15",
+  84: "2026-06-24",
+  85: "2026-07-05",
+  86: "2026-05-30",
+  87: "2026-06-02",
+  88: "2026-06-11",
+  89: "2026-06-20",
+  90: "2026-06-29",
+  91: "2026-07-01",
+  92: "2026-07-10",
+  93: "2026-02-22",
+  94: "2026-03-03",
+  95: "2026-10-05",
+  96: "2026-10-14",
+  97: "2026-10-23",
+  98: "2026-11-04",
+  99: "2026-11-13",
+  100: "2026-01-27",
+  101: "2026-02-08",
+  102: "2026-02-17",
+  103: "2026-02-26",
+  104: "2026-03-07",
+  105: "2026-10-09",
+  106: "2026-10-18",
+  107: "2026-10-27",
+  108: "2026-11-08",
+  109: "2026-02-07",
+  110: "2026-02-16",
+  111: "2026-02-25",
+  112: "2026-03-06",
+  113: "2026-10-08",
+  114: "2026-10-17",
+  115: "2026-10-26",
+  116: "2026-11-07",
+  117: "2026-01-29",
+  118: "2026-02-01",
+  119: "2026-02-10",
+  120: "2026-02-19",
+  121: "2026-02-28",
+  122: "2026-03-09",
+  123: "2026-09-30",
+  124: "2026-10-02",
+  125: "2026-10-11",
+  126: "2026-10-20",
+  127: "2026-10-29",
+  128: "2026-11-01",
+  129: "2026-11-10",
+  130: "2026-02-06",
+  131: "2026-02-15",
+  132: "2026-02-24",
+  133: "2026-03-05",
+  134: "2026-10-07",
+  135: "2026-10-16",
+  136: "2026-10-25",
+  137: "2026-11-06",
+  138: "2026-05-20",
+  139: "2026-07-18",
+  140: "2026-07-27",
+  141: "2026-04-21",
+  142: "2026-04-30",
+  143: "2026-05-02",
+  144: "2026-05-11",
+  145: "2026-03-31",
+  146: "2026-04-03",
+  147: "2026-04-12",
+  148: "2026-05-27",
+  149: "2026-05-18",
+  150: "2026-07-16",
+  151: "2026-07-25",
+  152: "2026-04-28",
+  153: "2026-05-09",
+  154: "2026-03-29",
+  155: "2026-04-01",
+  156: "2026-04-10",
+  157: "2026-04-19",
+  158: "2026-05-24",
+  159: "2026-05-15",
+  160: "2026-07-22",
+  161: "2026-04-25",
+  162: "2026-05-06",
+  163: "2026-04-07",
+  164: "2026-04-16",
+  165: "2026-05-26",
+  166: "2026-05-17",
+  167: "2026-07-15",
+  168: "2026-07-24",
+  169: "2026-04-27",
+  170: "2026-05-08",
+  171: "2026-03-28",
+  172: "2026-04-09",
+  173: "2026-04-18",
+  174: "2026-05-19",
+  175: "2026-07-17",
+  176: "2026-07-26",
+  177: "2026-04-29",
+  178: "2026-05-01",
+  179: "2026-05-10",
+  180: "2026-03-30",
+  181: "2026-04-02",
+  182: "2026-04-11",
+  183: "2026-04-20",
+  184: "2026-05-23",
+  185: "2026-05-14",
+  186: "2026-07-21",
+  187: "2026-04-24",
+  188: "2026-05-05",
+  189: "2026-04-06",
+  190: "2026-04-15",
+  191: "2026-05-22",
+  192: "2026-05-13",
+  193: "2026-07-20",
+  194: "2026-07-29",
+  195: "2026-04-23",
+  196: "2026-05-04",
+  197: "2026-04-05",
+  198: "2026-04-14",
+  199: "2026-05-25",
+  200: "2026-05-16",
+  201: "2026-07-14",
+  202: "2026-07-23",
+  203: "2026-04-26",
+  204: "2026-05-07",
+  205: "2026-03-27",
+  206: "2026-04-08",
+  207: "2026-04-17",
+  208: "2026-05-12",
+  209: "2026-05-21",
+  210: "2026-07-19",
+  211: "2026-07-28",
+  212: "2026-04-22",
+  213: "2026-05-03",
+  214: "2026-04-04",
+  215: "2026-04-13",
+  216: "2026-03-13",
+  217: "2026-03-22",
+  218: "2026-11-14",
+  219: "2026-11-23",
+  220: "2026-01-15",
+  221: "2026-01-24",
+  222: "2026-09-16",
+  223: "2026-09-25",
+  224: "2026-03-20",
+  225: "2026-11-21",
+  226: "2026-01-13",
+  227: "2026-01-22",
+  228: "2026-09-14",
+  229: "2026-09-23",
+  230: "2026-03-17",
+  231: "2026-03-26",
+  232: "2026-11-18",
+  233: "2026-11-27",
+  234: "2026-01-19",
+  235: "2026-09-20",
+  236: "2026-09-29",
+  237: "2026-03-19",
+  238: "2026-11-20",
+  239: "2026-01-12",
+  240: "2026-01-21",
+  241: "2026-09-22",
+  242: "2026-03-12",
+  243: "2026-03-21",
+  244: "2026-11-22",
+  245: "2026-01-14",
+  246: "2026-01-23",
+  247: "2026-09-15",
+  248: "2026-09-24",
+  249: "2026-03-16",
+  250: "2026-03-25",
+  251: "2026-11-17",
+  252: "2026-11-26",
+  253: "2026-01-18",
+  254: "2026-09-19",
+  255: "2026-09-28",
+  256: "2026-03-15",
+  257: "2026-03-24",
+  258: "2026-11-16",
+  259: "2026-11-25",
+  260: "2026-01-17",
+  261: "2026-01-26",
+  262: "2026-09-18",
+  263: "2026-09-27",
+  264: "2026-03-18",
+  265: "2026-11-19",
+  266: "2026-11-28",
+  267: "2026-01-20",
+  268: "2026-09-21",
+  269: "2026-03-14",
+  270: "2026-03-23",
+  271: "2026-11-15",
+  272: "2026-11-24",
+  273: "2026-01-16",
+  274: "2026-01-25",
+  275: "2026-09-17",
+  276: "2026-09-26",
+  277: "2026-08-08",
+  278: "2026-08-17",
+  279: "2026-08-26",
+  280: "2026-09-07",
+  281: "2026-12-04",
+  282: "2026-12-13",
+  283: "2026-12-22",
+  284: "2026-12-31",
+  285: "2026-01-06",
+  286: "2026-08-06",
+  287: "2026-08-15",
+  288: "2026-08-24",
+  289: "2026-09-05",
+  290: "2026-11-30",
+  291: "2026-12-02",
+  292: "2026-12-11",
+  293: "2026-12-20",
+  294: "2026-12-29",
+  295: "2026-01-04",
+  296: "2026-07-31",
+  297: "2026-08-03",
+  298: "2026-08-12",
+  299: "2026-08-21",
+  300: "2026-08-30",
+  301: "2026-09-02",
+  302: "2026-09-11",
+  303: "2026-12-08",
+  304: "2026-12-17",
+  305: "2026-12-26",
+  306: "2026-01-01",
+  307: "2026-01-10",
+  308: "2026-08-05",
+  309: "2026-08-14",
+  310: "2026-08-23",
+  311: "2026-09-04",
+  312: "2026-09-13",
+  313: "2026-11-29",
+  314: "2026-12-01",
+  315: "2026-12-10",
+  316: "2026-12-19",
+  317: "2026-12-28",
+  318: "2026-01-03",
+  319: "2026-08-07",
+  320: "2026-08-16",
+  321: "2026-08-25",
+  322: "2026-09-06",
+  323: "2026-12-30",
+  324: "2026-01-05",
+  325: "2026-12-23",
+  326: "2026-01-07",
+  327: "2026-12-25",
+  328: "2026-01-09",
+  329: "2026-12-03",
+  330: "2026-12-12",
+  331: "2026-12-21",
+  332: "2026-07-30",
+  333: "2026-08-02",
+  334: "2026-08-11",
+  335: "2026-08-20",
+  336: "2026-08-29",
+  337: "2026-09-01",
+  338: "2026-09-10",
+  339: "2026-12-07",
+  340: "2026-12-16",
+  341: "2026-08-01",
+  342: "2026-08-10",
+  343: "2026-08-19",
+  344: "2026-08-28",
+  345: "2026-09-09",
+  346: "2026-12-06",
+  347: "2026-12-15",
+  348: "2026-12-24",
+  349: "2026-01-08",
+  350: "2026-08-04",
+  351: "2026-08-13",
+  352: "2026-08-22",
+  353: "2026-08-31",
+  354: "2026-09-03",
+  355: "2026-09-12",
+  356: "2026-12-09",
+  357: "2026-12-18",
+  358: "2026-12-27",
+  359: "2026-01-02",
+  360: "2026-01-11",
+  361: "2026-08-09",
+  362: "2026-08-18",
+  363: "2026-08-27",
+  364: "2026-09-08",
+  365: "2026-12-05",
+  366: "2026-12-14",
+}
+
+// Create reverse lookup: date string (MM-DD) to rank
+const dateToRank: Record<string, number> = {}
+Object.entries(LUCK_DATA).forEach(([rank, date]) => {
+  const [, month, day] = date.split("-")
+  const key = `${month}-${day}`
+  dateToRank[key] = Number.parseInt(rank)
+})
+
+function getLuckMessage(percentile: number): { emoji: string; message: string; vibe: string } {
+  if (percentile <= 5) {
+    return {
+      emoji: "✨🌟💫",
+      message: "you're basically the main character of reality",
+      vibe: "LEGENDARY STATUS",
+    }
+  } else if (percentile <= 10) {
+    return {
+      emoji: "🎰🍀💎",
+      message: "universe literally said YES to you",
+      vibe: "ELITE TIER",
+    }
+  } else if (percentile <= 20) {
+    return {
+      emoji: "🎉🔥🚀",
+      message: "energy IMMACULATE no cap",
+      vibe: "WINNING",
+    }
+  } else if (percentile <= 35) {
+    return {
+      emoji: "😎✌️🌈",
+      message: "you're doing pretty solid ngl",
+      vibe: "GOOD VIBES",
+    }
+  } else if (percentile <= 50) {
+    return {
+      emoji: "👍😊🌸",
+      message: "not bad at all, respectable",
+      vibe: "CHILL MODE",
+    }
+  } else if (percentile <= 65) {
+    return {
+      emoji: "😐🤷‍♂️",
+      message: "mid but its whatever honestly",
+      vibe: "MEDIOCRE SZN",
+    }
+  } else if (percentile <= 75) {
+    return {
+      emoji: "😬💀",
+      message: "kinda rough but we move",
+      vibe: "STRUGGLING",
+    }
+  } else if (percentile <= 85) {
+    return {
+      emoji: "💀💀💀",
+      message: "you're cooked fr fr",
+      vibe: "DOWN BAD",
+    }
+  } else if (percentile <= 95) {
+    return {
+      emoji: "🚨😭🆘",
+      message: "might wanna rethink some life choices",
+      vibe: "YIKES CENTRAL",
+    }
+  } else {
+    return {
+      emoji: "🌙🚀👽",
+      message: "pack ur bags & move to the moon NOW",
+      vibe: "EMERGENCY MODE",
+    }
+  }
+}
+
+export default function BirthdayLuckPage() {
+  const [birthDate, setBirthDate] = useState("")
+  const [result, setResult] = useState<{
+    rank: number
+    percentile: number
+    emoji: string
+    message: string
+    vibe: string
+  } | null>(null)
+
+  const checkLuck = () => {
+    if (!birthDate) {
+      alert("yo enter your birthday first! 📅")
+      return
+    }
+
+    const [year, month, day] = birthDate.split("-")
+    const key = `${month}-${day}`
+    const rank = dateToRank[key]
+
+    if (rank) {
+      const percentile = ((rank - 1) / 365) * 100
+      const luckInfo = getLuckMessage(percentile)
+      setResult({
+        rank,
+        percentile,
+        ...luckInfo,
+      })
+    } else {
+      alert("couldn't find your birthday luck! try again 🤔")
+    }
+  }
+
+  const reset = () => {
+    setBirthDate("")
+    setResult(null)
+  }
+
+  return (
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-[#ff6b9d] via-[#c44569] to-[#6a0572]">
+      {/* Funky animated background shapes */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-5%] w-96 h-96 bg-[#ffd93d] rounded-[60%_40%_30%_70%/60%_30%_70%_40%] opacity-20 animate-[spin_20s_linear_infinite]" />
+        <div className="absolute bottom-[-10%] right-[-5%] w-80 h-80 bg-[#6bcf7f] rounded-[40%_60%_70%_30%/40%_70%_30%_60%] opacity-20 animate-[spin_25s_linear_infinite_reverse]" />
+        <div className="absolute top-[20%] right-[10%] w-64 h-64 bg-[#4a69bd] rounded-[70%_30%_50%_50%/30%_60%_40%_70%] opacity-15 animate-[spin_15s_linear_infinite]" />
+        <div className="absolute bottom-[30%] left-[15%] w-72 h-72 bg-[#f6b93b] rounded-[50%_50%_30%_70%/50%_50%_70%_30%] opacity-15 animate-[spin_30s_linear_infinite_reverse]" />
+      </div>
+
+      <main className="relative z-10 px-4 py-8 md:py-12 flex items-center justify-center min-h-screen">
+        <div className="w-full max-w-md">
+          {!result ? (
+            <div className="space-y-6 md:space-y-8 animate-fade-in">
+              {/* Header */}
+              <div className="text-center space-y-2">
+                <h1 className="text-5xl md:text-6xl font-black text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.4)] leading-tight tracking-tight rotate-[-2deg]">
+                  誕生日運勢
+                </h1>
+                <h2 className="text-2xl md:text-3xl font-extrabold text-[#ffd93d] drop-shadow-lg rotate-[1deg]">
+                  Birthday Luck Checker
+                </h2>
+                <p className="text-white/70 text-xs md:text-sm font-medium px-4 italic">
+                  based on japanese birthday calendar
+                </p>
+                <p className="text-white/90 text-sm md:text-base font-medium px-4 pt-1">
+                  discover ur cosmic birthday energy ✨
+                </p>
+              </div>
+
+              {/* Input card */}
+              <div className="bg-white/95 backdrop-blur p-6 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.3)] rounded-[30px_10px_30px_10px] border-4 border-black rotate-[-0.5deg] hover:rotate-[0deg] transition-transform">
+                <label className="block text-center space-y-4">
+                  <span className="text-2xl md:text-3xl font-black text-[#c44569] block rotate-[1deg]">何月何日？</span>
+                  <span className="text-sm md:text-base font-bold text-gray-700 block">when were u born?</span>
+                  <input
+                    type="date"
+                    value={birthDate}
+                    onChange={(e) => setBirthDate(e.target.value)}
+                    className="w-full px-4 py-4 text-lg md:text-xl font-bold text-center border-4 border-black rounded-[20px_5px_20px_5px] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-2px] focus:translate-y-[-2px] transition-all bg-[#ffd93d]"
+                  />
+                </label>
+              </div>
+
+              {/* Submit button */}
+              <button
+                onClick={checkLuck}
+                disabled={!birthDate}
+                className="w-full py-5 md:py-6 text-xl md:text-2xl font-black text-white bg-gradient-to-r from-[#6bcf7f] to-[#4a69bd] rounded-[15px_40px_15px_40px] shadow-[6px_6px_0px_0px_rgba(0,0,0,0.3)] border-4 border-black hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,0.3)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)] active:translate-x-[2px] active:translate-y-[2px] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,0.3)] disabled:hover:translate-x-0 disabled:hover:translate-y-0 transition-all rotate-[0.5deg] hover:rotate-[-0.5deg]"
+              >
+                CHECK MY LUCK ✨
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-4 md:space-y-8 animate-fade-in">
+              {/* Results card */}
+              <div className="bg-white/95 backdrop-blur p-5 md:p-8 shadow-[10px_10px_0px_0px_rgba(0,0,0,0.3)] rounded-[40px_10px_40px_10px] border-4 border-black space-y-4 md:space-y-6">
+                {/* Emoji header */}
+                <div className="text-center">
+                  <div className="text-5xl md:text-7xl mb-2 md:mb-3 animate-bounce">{result.emoji}</div>
+                  <div className="inline-block bg-[#ffd93d] px-4 md:px-6 py-1.5 md:py-2 rounded-[20px_5px] border-3 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] rotate-[-1deg]">
+                    <p className="text-xs md:text-base font-black text-black uppercase tracking-wider">{result.vibe}</p>
+                  </div>
+                </div>
+
+                {/* Percentile */}
+                <div className="text-center space-y-1 md:space-y-2">
+                  <p className="text-base md:text-xl font-bold text-gray-600 uppercase tracking-wide">you're in the</p>
+                  <div className="text-6xl md:text-8xl font-black text-[#c44569] drop-shadow-lg rotate-[2deg]">
+                    TOP {result.percentile.toFixed(1)}%
+                  </div>
+                  <p className="text-sm md:text-lg font-bold text-gray-700">rank #{result.rank} out of 366 days</p>
+                </div>
+
+                {/* Message */}
+                <div className="bg-gradient-to-r from-[#ff6b9d] to-[#c44569] p-4 md:p-6 rounded-[25px_10px_25px_10px] border-3 border-black shadow-inner">
+                  <p className="text-base md:text-xl font-bold text-white text-center leading-relaxed">
+                    {result.message}
+                  </p>
+                </div>
+              </div>
+
+              {/* Try again button */}
+              <button
+                onClick={reset}
+                className="w-full py-5 md:py-6 text-xl md:text-2xl font-black text-black bg-[#ffd93d] rounded-[40px_15px_40px_15px] shadow-[6px_6px_0px_0px_rgba(0,0,0,0.3)] border-4 border-black hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,0.3)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)] active:translate-x-[2px] active:translate-y-[2px] transition-all rotate-[-0.5deg] hover:rotate-[0.5deg]"
+              >
+                CHECK ANOTHER DATE 🔄
+              </button>
+            </div>
+          )}
+
+          {/* Credit footer */}
+          <div className="mt-6 md:mt-8 text-center space-y-1">
+            <div className="flex items-center justify-center gap-2 flex-wrap text-white/80 text-sm md:text-base font-bold">
+              <a
+                href="https://x.com/zhhsay"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors hover:scale-105 transform duration-200"
+              >
+                made by{" "}
+                <span className="text-[#ffd93d] font-black underline decoration-wavy decoration-2 underline-offset-4">
+                  zhhsay
+                </span>
+              </a>
+              <span className="text-white/60">•</span>
+              <a
+                href="https://x.com/wwxwashere/status/1992648112213508433"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white/80 hover:text-white transition-colors hover:scale-105 transform duration-200 underline decoration-2 underline-offset-4"
+              >
+                source
+              </a>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  )
+}
