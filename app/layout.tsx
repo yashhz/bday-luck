@@ -10,7 +10,7 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "誕生日運勢 | Birthday Luck Checker",
   description: "Discover your cosmic birthday energy with this funky Japanese luck calculator",
-    generator: 'v0.app'
+    generator: 'zhhsay'
 }
 
 export default function RootLayout({
