@@ -6,10 +6,6 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  output: 'export',
-  basePath: '/bdayluck',
-  assetPrefix: '/bdayluck',
-  trailingSlash: true,
 }
 
 export default nextConfig

@@ -482,6 +482,13 @@ export default function BirthdayLuckPage() {
     setResult(null)
   }
 
+  const shareOnTwitter = () => {
+    if (!result) return
+    const text = `Hey! I got my birthday luck: TOP ${result.percentile.toFixed(1)}% 🎉\n${result.emoji} ${result.vibe}\n\nCheck yours at bdayluck.vercel.app`
+    const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`
+    window.open(url, "_blank")
+  }
+
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-[#ff6b9d] via-[#c44569] to-[#6a0572]">
       {/* Funky animated background shapes */}
@@ -521,7 +528,8 @@ export default function BirthdayLuckPage() {
                     type="date"
                     value={birthDate}
                     onChange={(e) => setBirthDate(e.target.value)}
-                    className="w-full px-4 py-4 text-lg md:text-xl font-bold text-center border-4 border-black rounded-[20px_5px_20px_5px] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-2px] focus:translate-y-[-2px] transition-all bg-[#ffd93d]"
+                    className="w-full px-4 py-3 md:py-4 text-base md:text-xl font-bold text-center border-4 border-black rounded-[20px_5px_20px_5px] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] focus:translate-x-[-2px] focus:translate-y-[-2px] transition-all bg-[#ffd93d] text-black appearance-none [color-scheme:light]"
+                    style={{ colorScheme: 'light' }}
                   />
                 </label>
               </div>
@@ -536,41 +544,52 @@ export default function BirthdayLuckPage() {
               </button>
             </div>
           ) : (
-            <div className="space-y-4 md:space-y-8 animate-fade-in">
+            <div className="space-y-3 md:space-y-6 animate-fade-in">
               {/* Results card */}
-              <div className="bg-white/95 backdrop-blur p-5 md:p-8 shadow-[10px_10px_0px_0px_rgba(0,0,0,0.3)] rounded-[40px_10px_40px_10px] border-4 border-black space-y-4 md:space-y-6">
+              <div className="bg-white/95 backdrop-blur p-4 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.3)] md:shadow-[10px_10px_0px_0px_rgba(0,0,0,0.3)] rounded-[30px_10px_30px_10px] md:rounded-[40px_10px_40px_10px] border-4 border-black space-y-3 md:space-y-6">
                 {/* Emoji header */}
                 <div className="text-center">
-                  <div className="text-5xl md:text-7xl mb-2 md:mb-3 animate-bounce">{result.emoji}</div>
-                  <div className="inline-block bg-[#ffd93d] px-4 md:px-6 py-1.5 md:py-2 rounded-[20px_5px] border-3 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] rotate-[-1deg]">
+                  <div className="text-4xl md:text-7xl mb-2 md:mb-3 animate-bounce">{result.emoji}</div>
+                  <div className="inline-block bg-[#ffd93d] px-3 md:px-6 py-1 md:py-2 rounded-[15px_5px] md:rounded-[20px_5px] border-3 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] rotate-[-1deg]">
                     <p className="text-xs md:text-base font-black text-black uppercase tracking-wider">{result.vibe}</p>
                   </div>
                 </div>
 
                 {/* Percentile */}
                 <div className="text-center space-y-1 md:space-y-2">
-                  <p className="text-base md:text-xl font-bold text-gray-600 uppercase tracking-wide">you're in the</p>
-                  <div className="text-6xl md:text-8xl font-black text-[#c44569] drop-shadow-lg rotate-[2deg]">
+                  <p className="text-sm md:text-xl font-bold text-gray-600 uppercase tracking-wide">you're in the</p>
+                  <div className="text-5xl md:text-8xl font-black text-[#c44569] drop-shadow-lg rotate-[2deg] leading-tight">
                     TOP {result.percentile.toFixed(1)}%
                   </div>
-                  <p className="text-sm md:text-lg font-bold text-gray-700">rank #{result.rank} out of 366 days</p>
+                  <p className="text-xs md:text-lg font-bold text-gray-700">rank #{result.rank} out of 366 days</p>
                 </div>
 
                 {/* Message */}
-                <div className="bg-gradient-to-r from-[#ff6b9d] to-[#c44569] p-4 md:p-6 rounded-[25px_10px_25px_10px] border-3 border-black shadow-inner">
-                  <p className="text-base md:text-xl font-bold text-white text-center leading-relaxed">
+                <div className="bg-gradient-to-r from-[#ff6b9d] to-[#c44569] p-3 md:p-6 rounded-[20px_8px_20px_8px] md:rounded-[25px_10px_25px_10px] border-3 border-black shadow-inner">
+                  <p className="text-sm md:text-xl font-bold text-white text-center leading-relaxed">
                     {result.message}
                   </p>
                 </div>
               </div>
 
-              {/* Try again button */}
-              <button
-                onClick={reset}
-                className="w-full py-5 md:py-6 text-xl md:text-2xl font-black text-black bg-[#ffd93d] rounded-[40px_15px_40px_15px] shadow-[6px_6px_0px_0px_rgba(0,0,0,0.3)] border-4 border-black hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,0.3)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)] active:translate-x-[2px] active:translate-y-[2px] transition-all rotate-[-0.5deg] hover:rotate-[0.5deg]"
-              >
-                CHECK ANOTHER DATE 🔄
-              </button>
+              {/* Action buttons */}
+              <div className="space-y-2 md:space-y-3">
+                {/* Share on X button */}
+                <button
+                  onClick={shareOnTwitter}
+                  className="w-full py-4 md:py-6 text-lg md:text-2xl font-black text-white bg-gradient-to-r from-[#1DA1F2] to-[#0d8bd9] rounded-[30px_12px_30px_12px] md:rounded-[40px_15px_40px_15px] shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] md:shadow-[6px_6px_0px_0px_rgba(0,0,0,0.3)] border-3 md:border-4 border-black hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,0.3)] md:hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,0.3)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)] active:translate-x-[2px] active:translate-y-[2px] transition-all rotate-[0.5deg] hover:rotate-[-0.5deg]"
+                >
+                  SHARE ON X 🐦
+                </button>
+
+                {/* Try again button */}
+                <button
+                  onClick={reset}
+                  className="w-full py-4 md:py-6 text-lg md:text-2xl font-black text-black bg-[#ffd93d] rounded-[30px_12px_30px_12px] md:rounded-[40px_15px_40px_15px] shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)] md:shadow-[6px_6px_0px_0px_rgba(0,0,0,0.3)] border-3 md:border-4 border-black hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,0.3)] md:hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,0.3)] hover:translate-x-[-2px] hover:translate-y-[-2px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,0.3)] active:translate-x-[2px] active:translate-y-[2px] transition-all rotate-[-0.5deg] hover:rotate-[0.5deg]"
+                >
+                  CHECK ANOTHER DATE 🔄
+                </button>
+              </div>
             </div>
           )}
 
@@ -578,24 +597,25 @@ export default function BirthdayLuckPage() {
           <div className="mt-6 md:mt-8 text-center space-y-1">
             <div className="flex items-center justify-center gap-2 flex-wrap text-white/80 text-sm md:text-base font-bold">
               <a
-                href="https://x.com/zhhsay"
+                href="https://yashhz.vercel.app"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-white transition-colors hover:scale-105 transform duration-200"
               >
                 made by{" "}
                 <span className="text-[#ffd93d] font-black underline decoration-wavy decoration-2 underline-offset-4">
-                  zhhsay
+                  yashhz
                 </span>
               </a>
               <span className="text-white/60">•</span>
               <a
-                href="https://x.com/wwxwashere/status/1992648112213508433"
+                href="https://buymeacoffee.com/zhhsayj"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/80 hover:text-white transition-colors hover:scale-105 transform duration-200 underline decoration-2 underline-offset-4"
+                className="text-white/80 hover:text-white transition-colors hover:scale-105 transform duration-200 flex items-center gap-1"
               >
-                source
+                <span className="text-xl">☕</span>
+                <span className="underline decoration-2 underline-offset-4">buy me coffee</span>
               </a>
             </div>
           </div>
